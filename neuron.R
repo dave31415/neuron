@@ -32,7 +32,7 @@ file.name<-function(name='normal-1',type='ts'){
   return(file)
 }
 
-read.data<-function(name='normal-1',type='ts'){
+read.data<-function(name='small',type='ts'){
   #read neuron time series data
   file=file.name(name=name,type=type)
   return(data.table(read.csv(file,header=F)))  
@@ -48,14 +48,22 @@ xcor<-function(ts,num1=1,num2=1,lag.max=500){
   return(xc)
 }
 
-plot.some<-function(d,nsamp=8,tmin=1,tmax=3000){
+plot.some<-function(d,nsamp=8,tmin=1,tmax=4000){
   num.neuron=ncol(d)
   num.time=nrow(d)
   s=sample(num.neuron,nsamp)
   plot(0,0,cex=0,xlim=c(tmin-1,tmax+1),ylim=c(0,nsamp+2),xlab="Time",ylab="Response")
   for (i in 1:nsamp) {
-    lines(tmin:tmax,d[[s[i]]][tmin:tmax]+i,lw=1)
+    x=d[[s[i]]][tmin:tmax]
+    #scale it ?
+    scale=T
+    if (scale==T) {
+      x=tanh(x*5)
+      x=smooth(x)
+    }
+    lines(tmin:tmax,x+i,lw=1)
     lines(tmin:tmax,rep(i,tmax-tmin+1),lw=0.7,col='lightblue')
+    
   }
 }
 
